@@ -29,8 +29,10 @@
 
       // setup the object that defines the state of the game
       let gameObj = {
+        gameStarted: false,
+        gamePaused: false,
+        gamWon: false,
         gameOver: false,
-        gameWon: false,
         level: 1
       };
 
@@ -104,12 +106,6 @@
       backgroundImage.src = 'gameAssets/bg.jpg';
       backgroundImage.position = { x: 0, y: 0};
 
-      // add the stars slide
-      const stars = new Image();
-      stars.src = 'gameAssets/stars.png';
-      stars.position = { x: 0, y: 0};
-
-   
 
       // function to check if two objects objects are colliding
       let areColliding = (obj1, obj2) => {
@@ -122,8 +118,61 @@
         return false;
       }
 
+      // define the enemy / harm objects
+      let numEnemies = 2;
+      let enemyRadius = 40;
+      let enemyColor = "red";
+      let enemySpeed = 10;
+      let enemyImg = new Image();
+      enemyImg.src = "gameAssets/meteor.svg";
+      
+      // define the collection of enemy objects
+      let enemies = [];
+
+      // add elements to the collection of ememy objects
+      for (let i = 0; i < numEnemies; i++) {
+        // let x = (canvas.width) + 1635;
+        let x = (canvas.width) + 1500;
+        let y = enemyRadius + (Math.random() * (canvas.height - (2 * enemyRadius)));
+        
+        // let direction = Math.random() * 2.0 * Math.PI;
+        enemies.push({
+                      x:x, 
+                      y:y, 
+                      radius:enemyRadius, 
+                      speed:enemySpeed, 
+                      colour:enemyColor,
+                      img:enemyImg
+                    });
+      }
 
 
+      // function to draw the ememy / harm objects
+      let drawEnemies = () => {
+        enemies.forEach( (enemy) => {
+          // draw the ring
+          context.beginPath();
+          context.arc(enemy.x, enemy.y, enemy.radius, 0, 2*Math.PI);
+          context.strokeStyle = enemy.colour;
+          context.fillStyle = "transparent";
+          context.lineWidth = 8;
+          context.shadowColor = 'yellow';
+          context.shadowOffsetX = 0;
+          context.shadowOffsetY = 0;
+          context.shadowBlur = 15;
+          context.closePath();
+          context.fill();
+          context.stroke();
+          
+          // draw the enemy's image
+          context.drawImage(enemy.img, (enemy.x - 42), (enemy.y - 95), 200, 200);
+          
+          // change the posiion of the enemy object
+          enemy.x -= enemy.speed;
+       });
+   
+
+      }
 
       document.addEventListener("DOMContentLoaded", (event) => {
 
@@ -147,20 +196,12 @@
           context.fill();
           context.stroke();
         }
-        
-        // function to check if the player is going off bounds
-        let playerEdgeCheck = (player) => {
-          if ((player.y - player.radius) < 0) {
-            player.y = player.radius;
-          } else if ((player.y + player.radius) > canvas.height) {
-            player.y = canvas.height - player.radius;
-          }
-        }
+
 
 
         const draw = () => {
-          // fix the device pixel ratio
-          fix_dpi();
+          // // fix the device pixel ratio
+          // fix_dpi();
           
           // clear previous scene
           context.clearRect(0, 0, canvas.width, canvas.height);
@@ -172,7 +213,13 @@
           if (player.life <= 1) {
             player.strokeColor = "red";
           } 
-          
+
+          // draw the player
+          drawPlayer();
+
+          // draw the enemies
+          drawEnemies();
+
           // invoke request animation frame
           requestAnimationFrame(draw);
         }
