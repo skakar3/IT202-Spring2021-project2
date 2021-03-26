@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width">
+    <title>IT 202 Project 2</title>
+    <link href="style.css" rel="stylesheet" type="text/css" />
+
+    <style>
+    canvas {
+      height: 100vh;
+      width: 100vw;
+      position: absolute;
+      background-color: "white";
+    }
+    body {
+      margin: 0;
+      padding: 0;
+      background-color: "white";
+    }
+    </style>
+
+  </head>
+
+  <body>
+    <canvas id="gameCanvas"></canvas>
+
+    <script>
+
+      // setup the variables that define the state of the game
+      let gameOver = false;
+      let gameWon = false;
+      let level = 1;
+      
+
+      // define the key codes of the keyboard keys
+      let downArrow = 40;
+      let upArrow = 38;
+      let wKey = 87;
+      let sKey = 83;
+
+      // define the requestAnimationFrame
+      let requestAnimationFrame = window.requestAnimationFrame ||
+                                  window.mozRequestAnimationFrame ||
+                                  window.webkitRequestAnimationFrame ||
+                                  window.msRequestAnimationFrame;
+
+      // set the canvas and context objects
+      let canvas = document.querySelector("canvas");
+      // canvas.style.backgroundColor = "silver";
+      let context = canvas.getContext("2d");
+
+
+
+      // set the player's properties
+      let playerX = (canvas.width / 2) + 100;
+      let playerY = (canvas.height / 2);
+      let playerRadius = 110;
+      let playerRing = 8;
+      let playerSpeed = 20;
+      let playerColor = "white";
+      let playerfill = "transparent";
+
+      // set player's life property
+      let playerLife = 5;
+
+      // set the player's score
+      let playerScore = 0;
+
+      // define the player's image
+      let playerImg = new Image();
+      playerImg.src = "gameAssets/ship2.png";
+
+      // assign the initial properties of the player
+      let player = {
+        x: playerX, 
+        y: playerY,
+        radius: playerRadius,
+        ring: playerRing,
+        strokeColor: playerColor,
+        fillColor: playerfill,
+        speed: playerSpeed,
+        life: playerLife,
+        score: playerScore,
+        img: playerImg
+      };
+ 
+      // add background image
+      const backgroundImage = new Image();
+      backgroundImage.src = 'gameAssets/bg.jpg';
+      backgroundImage.position = { x: 0, y: 0};
+
+
+      document.addEventListener("DOMContentLoaded", (event) => {
+
+        // function to draw the player
+        let drawPlayer = () => {
+          
+          // draw the player's image
+          context.drawImage(player.img, (player.x - 90), (player.y - 110), 180, 220);
+
+          // draw the ring around the player
+          context.beginPath();
+          context.arc(player.x, player.y, player.radius, 0, 2*Math.PI);
+          context.strokeStyle = player.strokeColor;
+          context.fillStyle = player.fillColor;
+          context.lineWidth = player.ring;
+          context.shadowColor = 'white';
+          context.shadowOffsetX = 0;
+          context.shadowOffsetY = 0;
+          context.shadowBlur = 15;
+          context.closePath();
+          context.fill();
+          context.stroke();
+        }
+
+        const draw = () => {
+
+          context.clearRect(0, 0, canvas.width, canvas.height);
+
+          // draw the player
+          drawPlayer();
+
+          // invoke request animation frame
+          requestAnimationFrame(draw);
+        }
+        draw();
+
+      });
+
+    </script>
+  </body>
+</html>
