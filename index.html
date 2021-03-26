@@ -27,10 +27,16 @@
 
     <script>
 
-      // setup the variables that define the state of the game
-      let gameOver = false;
-      let gameWon = false;
-      let level = 1;
+      // setup the object that defines the state of the game
+      let gameObj = {
+        gameOver: false,
+        gameWon: false,
+        level: 1
+      };
+
+      // let gameOver = false;
+      // let gameWon = false;
+      // let level = 1;
       
 
       // define the key codes of the keyboard keys
@@ -50,7 +56,15 @@
       // canvas.style.backgroundColor = "silver";
       let context = canvas.getContext("2d");
 
-
+      
+      // function to draw the game data
+      let drawGameData = () => {
+        context.font = "bold 20px Helvetica, Arial, sans-serif";
+        context.fillStyle = "white";
+        context.fillText(" |  Score : " + player.score, 40, 40);
+        context.fillText(" |  Lives : " + player.life, 40, 70);
+        context.fillText(" |  Level : " + gameObj.level, 40, 100);
+      }
 
       // set the player's properties
       let playerX = (canvas.width / 2) + 100;
@@ -90,6 +104,26 @@
       backgroundImage.src = 'gameAssets/bg.jpg';
       backgroundImage.position = { x: 0, y: 0};
 
+      // add the stars slide
+      const stars = new Image();
+      stars.src = 'gameAssets/stars.png';
+      stars.position = { x: 0, y: 0};
+
+   
+
+      // function to check if two objects objects are colliding
+      let areColliding = (obj1, obj2) => {
+        let dx = obj1.x - obj2.x;
+        let dy = obj1.y - obj2.y;
+        let distance = Math.sqrt(dx * dx + dy * dy);
+        if (distance < obj1.radius + obj2.radius) {
+          return true;
+        }
+        return false;
+      }
+
+
+
 
       document.addEventListener("DOMContentLoaded", (event) => {
 
@@ -113,18 +147,68 @@
           context.fill();
           context.stroke();
         }
+        
+        // function to check if the player is going off bounds
+        let playerEdgeCheck = (player) => {
+          if ((player.y - player.radius) < 0) {
+            player.y = player.radius;
+          } else if ((player.y + player.radius) > canvas.height) {
+            player.y = canvas.height - player.radius;
+          }
+        }
+
 
         const draw = () => {
-
+          // fix the device pixel ratio
+          fix_dpi();
+          
+          // clear previous scene
           context.clearRect(0, 0, canvas.width, canvas.height);
 
-          // draw the player
-          drawPlayer();
+          // draw the background
+          context.drawImage(backgroundImage, backgroundImage.position.x, backgroundImage.position.y, canvas.width, canvas.height);
 
+          // set the player ring color to red to symbolize danger
+          if (player.life <= 1) {
+            player.strokeColor = "red";
+          } 
+          
           // invoke request animation frame
           requestAnimationFrame(draw);
         }
         draw();
+
+      });
+
+      // add an event listner for keydown of the up arrow key
+      document.addEventListener("keydown", (event) => {
+        
+        switch(event.keyCode) {
+          // up arrow
+          case (upArrow): {
+            player.y -= player.speed;
+            break;
+          }
+          // down arrow
+          case (downArrow): {
+            player.y += player.speed;
+            break;
+          }
+           // w key (up)
+          case (wKey): {
+            player.y -= player.speed;
+            break;
+          }
+          // s key (down)
+          case (sKey): {
+            player.y += player.speed;
+            break;
+          }
+          // default case - unwanted key is pressed
+          default: {
+            console.log("case fell through");
+          }
+        }
 
       });
 
