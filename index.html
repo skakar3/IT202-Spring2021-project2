@@ -1,25 +1,9 @@
-<!-- 
-add main screen
-reduce player and object size
-increase player speed
-make it a PWA
-add sounds
-manage next levels
-add protection objects
-restart game / play new game
-clean the code
--->
-
 <!DOCTYPE html>
 <html>
   <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width">
     <title>IT 202 Project 2</title>
-    <link href="style.css" rel="stylesheet" type="text/css" />
-    
-    <!-- Bootstrap -->
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-BmbxuPwQa2lc/FVzBcNJ7UAyJxM6wuqIj61tLrc4wSX0szH/Ev+nYRRuWlolflfl" crossorigin="anonymous">
 
     <style>
     canvas {
@@ -45,6 +29,7 @@ clean the code
 
       // setup the object that defines the state of the game
       let gameObj = {
+        gameChooseShip: false,
         gameInst: false,
         gameStarted: false,
         gamePaused: false,
@@ -151,6 +136,11 @@ clean the code
       instBG.src = 'gameAssets/instructionsBG.jpg';
       instBG.position = { x: 0, y: 0};
 
+      // add background image for the choose ship screen
+      const chooseShipBG = new Image();
+      chooseShipBG.src = 'gameAssets/chooseShipBG.jpg';
+      chooseShipBG.position = { x: 0, y: 0};
+ 
       // add background image
       const backgroundImage = new Image();
       backgroundImage.src = 'gameAssets/bg.jpg';
@@ -499,6 +489,30 @@ clean the code
 
       }
 
+      let drawChooseShipWindow = () => {
+        context.clearRect(0, 0, canvas.width, canvas.height);
+
+        context.drawImage(instBG, instBG.position.x, instBG.position.y, canvas.width, canvas.height);
+
+        context.font = "bold 70px Helvetica, Arial, sans-serif";
+        context.fillStyle = "white";
+        context.fillText("Choose your ship", 140, 160);
+
+        let shipImg = new Image();
+        shipImg.src = 'gameAssets/ship1.png';
+        shipImg.position = { x: 300, y: canvas.height/2 - 260};
+        context.drawImage(shipImg, shipImg.position.x, shipImg.position.y, 500, 500);
+        context.font = "bold 30px Helvetica, Arial, sans-serif";
+        context.fillText("Press 1", 500, 750);
+
+        let shipImg2 = new Image();
+        shipImg2.src = 'gameAssets/ship2.png';
+        shipImg2.position = { x: 1100, y: canvas.height/2 - 230};
+        context.drawImage(shipImg2, shipImg2.position.x, shipImg2.position.y, 500, 500);
+        context.fillText("Press 2", 1200, 750);
+      }
+
+
       document.addEventListener("DOMContentLoaded", (event) => {
 
         // // function to draw the player
@@ -614,6 +628,10 @@ clean the code
               drawGameOverScreen();
             }
             // requestAnimationFrame(draw);
+          } else if (gameObj.gameChooseShip == true) {
+            drawChooseShipWindow();
+            requestAnimationFrame(draw);
+
           } else if (gameObj.gameInst == true) {
             drawInstructionsWindow();
             // gameObj.gameInst = false;
@@ -721,6 +739,29 @@ clean the code
           }
           // c key (continue to start the game)
           case (cKey): {
+            gameObj.gameChooseShip = true;
+            // gameObj.gameStarted = true;
+            break;
+          }
+          // when user presses 1 key (on keypad or normally)
+          case (oneKey): {
+            player.img.src = 'gameAssets/ship1.png';
+            gameObj.gameStarted = true;
+            break;
+          }
+          case (49): {
+            player.img.src = 'gameAssets/ship1.png';
+            gameObj.gameStarted = true;
+            break;
+          }
+          // when user presses 2 key (on keypad or normally)
+          case (twoKey): {
+            player.img.src = 'gameAssets/ship2.png';
+            gameObj.gameStarted = true;
+            break;
+          }
+          case (50): {
+            player.img.src = 'gameAssets/ship2.png';
             gameObj.gameStarted = true;
             break;
           }
@@ -734,5 +775,6 @@ clean the code
       });
 
     </script>
+
   </body>
 </html>
