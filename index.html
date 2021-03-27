@@ -45,6 +45,7 @@ clean the code
 
       // setup the object that defines the state of the game
       let gameObj = {
+        gameChooseShip: false,
         gameInst: false,
         gameStarted: false,
         gamePaused: false,
@@ -63,6 +64,8 @@ clean the code
       let sKey = 83;
       let enterKey = 13;
       let cKey = 67;
+      let oneKey = 97;
+      let twoKey = 98;
 
       // define the requestAnimationFrame
       let requestAnimationFrame = window.requestAnimationFrame ||
@@ -462,6 +465,13 @@ clean the code
         canvas.setAttribute('height', style.height() * dpi);
       }
 
+      let drawStartWindow = () => {
+        context.drawImage(startBG, startBG.position.x, startBG.position.y, canvas.width, canvas.height);
+        context.font = "bold 35px Helvetica, Arial, sans-serif";
+        context.fillStyle = "white";
+        context.fillText("Press Enter to Start", canvas.width/2 - 160, canvas.height/2 + 20);
+      }
+
       document.addEventListener("DOMContentLoaded", (event) => {
 
         // // function to draw the player
@@ -521,61 +531,122 @@ clean the code
           // clear previous scene
           context.clearRect(0, 0, canvas.width, canvas.height);
 
-          // draw the background
-          drawBackground();
+          if (gameObj.gameStarted == true) {
+            // draw the background
+            drawBackground();
 
-          // draw the game data
-          drawGameData();
+            // draw the game data
+            drawGameData();
 
-          // check if the player can go to the next level
-          if (player.score == (gameObj.scoreOffset + gameObj.levelOffset)) {
-            nextLevel();
-          }
+            // check if the player can go to the next level
+            if (player.score == (gameObj.scoreOffset + gameObj.levelOffset)) {
+              nextLevel();
+            }
 
-          // draw the player
-          drawPlayer();
+            // draw the player
+            drawPlayer();
 
-          // draw the enemies
-          drawEnemies();
+            // draw the enemies
+            drawEnemies();
 
-          // draw the beneits
-          drawBenefits();
+            // draw the beneits
+            drawBenefits();
 
-          // check for collision between player and enemy / harm objects
-          playerEnemyCollision();
+            // check for collision between player and enemy / harm objects
+            playerEnemyCollision();
 
-          // set the player ring color to red to symbolize danger
-          if (player.life <= 1) {
-            player.strokeColor = "red";
+            // set the player ring color to red to symbolize danger
+            if (player.life <= 1) {
+              player.strokeColor = "red";
+            } else {
+              player.strokeColor = "white";
+            }
+
+            // game over check
+            if (player.life <= 0) {
+              gameObj.gameOver = true;
+            }
+
+            // check for collision between player and benefit objects
+            playerBenefitCollision();
+
+            // check if player hits the edge
+            playerEdgeCheck(player);
+            
+            // check if enemy objects hit the edge
+            enemyEdgeCheck(enemies);
+
+            // check if the benefit objects hit the edge
+            benefitEdgeCheck(benefits);
+
+            // invoke request animation frame only when the game is not over
+            if (gameObj.gameOver == false) {
+              requestAnimationFrame(draw);
+            } else {
+              // draw the game over screen
+              drawGameOverScreen();
+            }
+            // requestAnimationFrame(draw);
           } else {
-            player.strokeColor = "white";
-          }
-
-          // game over check
-          if (player.life <= 0) {
-            gameObj.gameOver = true;
-          }
-
-          // check for collision between player and benefit objects
-          playerBenefitCollision();
-
-          // check if player hits the edge
-          playerEdgeCheck(player);
-          
-          // check if enemy objects hit the edge
-          enemyEdgeCheck(enemies);
-
-          // check if the benefit objects hit the edge
-          benefitEdgeCheck(benefits);
-
-          // invoke request animation frame only when the game is not over
-          if (gameObj.gameOver == false) {
+            drawStartWindow();
             requestAnimationFrame(draw);
-          } else {
-            // draw the game over screen
-            drawGameOverScreen();
           }
-          // requestAnimationFrame(draw);
+
+          // // draw the background
+          // drawBackground();
+
+          // // draw the game data
+          // drawGameData();
+
+          // // check if the player can go to the next level
+          // if (player.score == (gameObj.scoreOffset + gameObj.levelOffset)) {
+          //   nextLevel();
+          // }
+
+          // // draw the player
+          // drawPlayer();
+
+          // // draw the enemies
+          // drawEnemies();
+
+          // // draw the beneits
+          // drawBenefits();
+
+          // // check for collision between player and enemy / harm objects
+          // playerEnemyCollision();
+
+          // // set the player ring color to red to symbolize danger
+          // if (player.life <= 1) {
+          //   player.strokeColor = "red";
+          // } else {
+          //   player.strokeColor = "white";
+          // }
+
+          // // game over check
+          // if (player.life <= 0) {
+          //   gameObj.gameOver = true;
+          // }
+
+          // // check for collision between player and benefit objects
+          // playerBenefitCollision();
+
+          // // check if player hits the edge
+          // playerEdgeCheck(player);
+          
+          // // check if enemy objects hit the edge
+          // enemyEdgeCheck(enemies);
+
+          // // check if the benefit objects hit the edge
+          // benefitEdgeCheck(benefits);
+
+          // // invoke request animation frame only when the game is not over
+          // if (gameObj.gameOver == false) {
+          //   requestAnimationFrame(draw);
+          // } else {
+          //   // draw the game over screen
+          //   drawGameOverScreen();
+          // }
+          // // requestAnimationFrame(draw);
         }
         draw();
        
@@ -601,10 +672,17 @@ clean the code
             break;
           }
           // s key (down)
-          case (sKey): {
+          case (sKey): {8
             player.y += player.speed;
             break;
           }
+
+          // // enter key (start game)
+          case (enterKey): {
+            gameObj.gameStarted = true;
+            break;
+          }
+          
           // default case - unwanted key is pressed
           default: {
             console.log("case fell through");
