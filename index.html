@@ -1,3 +1,15 @@
+<!-- 
+add main screen
+reduce player and object size
+increase player speed
+make it a PWA
+add sounds
+manage next levels
+add protection objects
+restart game / play new game
+clean the code 
+-->
+
 <!DOCTYPE html>
 <html>
   <head>
@@ -132,11 +144,6 @@
       startBG.src = 'gameAssets/gameBG.png';
       startBG.position = { x: 0, y: 0};
 
-      // add background image for instructions screen
-      const instBG = new Image();
-      instBG.src = 'gameAssets/instructionsBG.jpg';
-      instBG.position = { x: 0, y: 0};
- 
       // add background image
       const backgroundImage = new Image();
       backgroundImage.src = 'gameAssets/bg.jpg';
@@ -393,6 +400,30 @@
         }        
       }
 
+      // function to increment the level
+      let nextLevel = () => {
+        // increment the player's life by 1
+        player.life++;
+
+        // add the level offset to the score offset
+        gameObj.scoreOffset += gameObj.levelOffset;
+
+        // increment game level
+        gameObj.level++;
+
+        // add an additional enemy / harm object to enemies
+        let x = (canvas.width) + 1500;
+        let y = enemyRadius + (Math.random() * (canvas.height - (2 * enemyRadius)));
+       
+        enemies.push({x:x, y:y, radius:enemyRadius, speed:enemySpeed, colour:enemyColor, img:enemyImg });
+        numEnemies++;
+
+        // increment speed with which the enemy / harm objects move accross the screen
+        enemies.forEach( (enemy) => {
+          enemy.speed += 4;
+        });
+      }
+
       let drawGameOverScreen = () => {
         // clear previous scene
         context.clearRect(0, 0, canvas.width, canvas.height);
@@ -430,7 +461,6 @@
         canvas.setAttribute('width', style.width() * dpi);
         canvas.setAttribute('height', style.height() * dpi);
       }
-
 
       document.addEventListener("DOMContentLoaded", (event) => {
 
@@ -496,6 +526,11 @@
 
           // draw the game data
           drawGameData();
+
+          // check if the player can go to the next level
+          if (player.score == (gameObj.scoreOffset + gameObj.levelOffset)) {
+            nextLevel();
+          }
 
           // draw the player
           drawPlayer();
