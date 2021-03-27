@@ -37,6 +37,8 @@
         gamePaused: false,
         gamWon: false,
         gameOver: false,
+        levelOffset: 50,
+        scoreOffset: 0,
         level: 1
       };
      
@@ -110,6 +112,11 @@
       const stars = new Image();
       stars.src = 'gameAssets/stars.png';
       stars.position = { x: 0, y: 0};
+
+      // add the second slide of stars
+      const stars2 = new Image();
+      stars2.src = 'gameAssets/stars.png';
+      stars2.position = { x: (canvas.width + 1550), y: 0};
 
       // function to check if two objects objects are colliding
       let areColliding = (obj1, obj2) => {
@@ -239,6 +246,41 @@
                       });
       }
 
+      // function to check if benefit objects are colliding
+      // if colliding, then re-draw then in a new position      
+      let checkBenefitCollision = () => {
+        benefits.forEach( (objA) => {
+          benefits.forEach( (objB) => {
+            
+            // check if we are not comparing the same circle
+            if (objA != objB) {
+            
+              // check if the circles are colliding
+              if (areColliding(objA, objB)) {
+            
+                // reposition one of the circles in a random y coordinate
+                objA.y = objA.radius + (Math.random() * (canvas.height - (2 * objA.radius)));
+              }
+            }
+          });
+        });
+      }
+
+      // check for collision between the player and the benefit objects
+      let playerBenefitCollision = () => {
+        
+        // iterate over each benefit element
+        benefits.forEach( (benefit) => {
+          
+          // check for collision
+          if (areColliding(player, benefit)) {
+            player.score += 1; // increment player score
+            benefit.x = (canvas.width);
+            benefit.y = benefit.radius + (Math.random() * (canvas.height - (2 * benefit.radius)));
+          }
+        });   
+      }
+
       // function to draw the benefit objects
       let drawBenefits = () => {
         benefits.forEach( (benefit) => {
@@ -263,9 +305,16 @@
           benefit.x -= benefit.speed;
         });
         
-        // check if the benefit objects are colliding - to do...
+        // check if the benefit objects are colliding
+        checkBenefitCollision();
       }
 
+      
+      let drawBackground = () => {
+        // draw the background
+        context.drawImage(backgroundImage, backgroundImage.position.x, backgroundImage.position.y, canvas.width, canvas.height);
+      
+      }
 
       document.addEventListener("DOMContentLoaded", (event) => {
 
@@ -309,6 +358,15 @@
           });
         }
 
+        // function to check if the benefit object is going off bounds
+        let benefitEdgeCheck = (benefits) => {
+          benefits.forEach( (benefit) => {
+            if ((benefit.x - benefit.radius) < 0) {
+              benefit.x = (canvas.width);
+              benefit.y = benefit.radius + (Math.random() * (canvas.height - (2 * benefit.radius)));
+            }
+          });
+        }
 
         // get the device pixel ratio
         dpi = window.devicePixelRatio;
@@ -339,7 +397,7 @@
           context.clearRect(0, 0, canvas.width, canvas.height);
 
           // draw the background
-          context.drawImage(backgroundImage, backgroundImage.position.x, backgroundImage.position.y, canvas.width, canvas.height);
+          drawBackground();
 
           // draw the game data
           drawGameData();
@@ -361,11 +419,22 @@
             player.strokeColor = "red";
           }
 
+          // game over check
+          if (player.life <= 0) {
+            gameObj.gameOver = true;
+          }
+
+          // check for collision between player and benefit objects
+          playerBenefitCollision();
+
           // check if player hits the edge
           playerEdgeCheck(player);
           
           // check if enemy objects hit the edge
           enemyEdgeCheck(enemies);
+
+          // check if the benefit objects hit the edge
+          benefitEdgeCheck(benefits);
 
           requestAnimationFrame(draw);
         }
