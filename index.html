@@ -1,9 +1,23 @@
+<!-- 
+add main screen
+reduce player and object size
+increase player speed
+make it a PWA
+add sounds
+manage next levels
+add protection objects
+restart game / play new game
+clean the code
+-->
+
 <!DOCTYPE html>
 <html>
   <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width">
     <title>IT 202 Project 2</title>
+
+    <link rel="manifest" href="manifest.json" />
 
     <style>
     canvas {
@@ -135,11 +149,6 @@
       const instBG = new Image();
       instBG.src = 'gameAssets/instructionsBG.jpg';
       instBG.position = { x: 0, y: 0};
-
-      // // add background image for the choose ship screen
-      // const chooseShipBG = new Image();
-      // chooseShipBG.src = 'gameAssets/chooseShipBG.jpg';
-      // chooseShipBG.position = { x: 0, y: 0};
  
       // add background image
       const backgroundImage = new Image();
@@ -531,57 +540,7 @@
 
 
       document.addEventListener("DOMContentLoaded", (event) => {
-
-        // // function to draw the player
-        // let drawPlayer = () => {
-          
-        //   // draw the player's image
-        //   context.drawImage(player.img, (player.x - 90), (player.y - 110), 180, 220);
-
-        //   // draw the ring around the player
-        //   context.beginPath();
-        //   context.arc(player.x, player.y, player.radius, 0, 2*Math.PI);
-        //   context.strokeStyle = player.strokeColor;
-        //   context.fillStyle = player.fillColor;
-        //   context.lineWidth = player.ring;
-        //   context.shadowColor = 'white';
-        //   context.shadowOffsetX = 0;
-        //   context.shadowOffsetY = 0;
-        //   context.shadowBlur = 15;
-        //   context.closePath();
-        //   context.fill();
-        //   context.stroke();
-        // }
         
-        // // function to check if the player is going off bounds
-        // let playerEdgeCheck = (player) => {
-        //   if ((player.y - player.radius) < 0) {
-        //     player.y = player.radius;
-        //   } else if ((player.y + player.radius) > canvas.height) {
-        //     player.y = canvas.height - player.radius;
-        //   }
-        // }
-
-        // // function to check if the enemy object is going off bounds
-        // let enemyEdgeCheck = (enemies) => {
-        //   enemies.forEach( (enemy) => {
-        //     if ((enemy.x - enemy.radius) < 0) {
-        //       enemy.x = (canvas.width);
-        //       enemy.y = enemy.radius + (Math.random() * (canvas.height - (2 * enemy.radius)));
-        //     }
-        //   });
-        // }
-
-        // // function to check if the benefit object is going off bounds
-        // let benefitEdgeCheck = (benefits) => {
-        //   benefits.forEach( (benefit) => {
-        //     if ((benefit.x - benefit.radius) < 0) {
-        //       benefit.x = (canvas.width);
-        //       benefit.y = benefit.radius + (Math.random() * (canvas.height - (2 * benefit.radius)));
-        //     }
-        //   });
-        // }
-
         const draw = () => {
           // fix the device pixel ratio
           fix_dpi();
@@ -589,6 +548,7 @@
           // clear previous scene
           context.clearRect(0, 0, canvas.width, canvas.height);
 
+          // check if game has started
           if (gameObj.gameStarted == true) {
             // draw the background
             drawBackground();
@@ -657,62 +617,6 @@
             drawStartWindow();
             requestAnimationFrame(draw);
           }
-
-          // // draw the background
-          // drawBackground();
-
-          // // draw the game data
-          // drawGameData();
-
-          // // check if the player can go to the next level
-          // if (player.score == (gameObj.scoreOffset + gameObj.levelOffset)) {
-          //   nextLevel();
-          // }
-
-          // // draw the player
-          // drawPlayer();
-
-          // // draw the enemies
-          // drawEnemies();
-
-          // // draw the beneits
-          // drawBenefits();
-
-          // // check for collision between player and enemy / harm objects
-          // playerEnemyCollision();
-
-          // // set the player ring color to red to symbolize danger
-          // if (player.life <= 1) {
-          //   player.strokeColor = "red";
-          // } else {
-          //   player.strokeColor = "white";
-          // }
-
-          // // game over check
-          // if (player.life <= 0) {
-          //   gameObj.gameOver = true;
-          // }
-
-          // // check for collision between player and benefit objects
-          // playerBenefitCollision();
-
-          // // check if player hits the edge
-          // playerEdgeCheck(player);
-          
-          // // check if enemy objects hit the edge
-          // enemyEdgeCheck(enemies);
-
-          // // check if the benefit objects hit the edge
-          // benefitEdgeCheck(benefits);
-
-          // // invoke request animation frame only when the game is not over
-          // if (gameObj.gameOver == false) {
-          //   requestAnimationFrame(draw);
-          // } else {
-          //   // draw the game over screen
-          //   drawGameOverScreen();
-          // }
-          // // requestAnimationFrame(draw);
         }
         draw();
        
@@ -742,13 +646,6 @@
             player.y += player.speed;
             break;
           }
-
-          // // // enter key (start game)
-          // case (enterKey): {
-          //   gameObj.gameStarted = true;
-          //   break;
-          // }
-          
           // enter key (start game)
           case (enterKey): {
             gameObj.gameInst = true;
@@ -793,7 +690,25 @@
 
     </script>
 
-
+    <script>
+      if ("serviceWorker" in navigator) {
+        window.addEventListener("load", () => {
+          navigator.serviceWorker.register("./sw.js", { scope: "." }).then(
+            (registration) => {
+              // registration successful
+              console.log(
+                "ServiceWorker registration successful with scope: ",
+                registration.scope
+              );
+            },
+            (err) => {
+              // registration failed
+              console.log("ServiceWorker registration failed: ", err);
+            }
+          );
+        });
+      }
+    </script>
   
   </body>
 </html>
