@@ -1,3 +1,12 @@
+<!-- add main screen
+reduce player and object size
+increase player speed
+make it a PWA
+add sounds
+manage next levels
+add protection objects
+clean the code -->
+
 <!DOCTYPE html>
 <html>
   <head>
@@ -37,7 +46,7 @@
         gamePaused: false,
         gamWon: false,
         gameOver: false,
-        levelOffset: 50,
+        levelOffset: 30,
         scoreOffset: 0,
         level: 1
       };
@@ -48,6 +57,7 @@
       let upArrow = 38;
       let wKey = 87;
       let sKey = 83;
+      let enterKey = 13;
 
       // define the requestAnimationFrame
       let requestAnimationFrame = window.requestAnimationFrame ||
@@ -313,8 +323,24 @@
       let drawBackground = () => {
         // draw the background
         context.drawImage(backgroundImage, backgroundImage.position.x, backgroundImage.position.y, canvas.width, canvas.height);
-      
+
+        // draw the stars
+        context.drawImage(stars, stars.position.x, stars.position.y, canvas.width, canvas.height);
+        stars.position.x -= 8;
+        
+        // draw the stars again for a wrap over
+        context.drawImage(stars2, stars2.position.x, stars2.position.y, canvas.width, canvas.height);
+        stars2.position.x -= 8;
+
+        // reset the position of the image
+        if(stars.position.x <= -canvas.width){
+          stars.position.x = canvas.width;
+        }
+        if(stars2.position.x <= -canvas.width){
+          stars2.position.x = canvas.width;
+        }        
       }
+
 
       document.addEventListener("DOMContentLoaded", (event) => {
 
@@ -435,6 +461,7 @@
 
           // check if the benefit objects hit the edge
           benefitEdgeCheck(benefits);
+
 
           requestAnimationFrame(draw);
         }
