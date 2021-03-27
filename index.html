@@ -7,7 +7,7 @@ add sounds
 manage next levels
 add protection objects
 restart game / play new game
-clean the code 
+clean the code
 -->
 
 <!DOCTYPE html>
@@ -45,7 +45,6 @@ clean the code
 
       // setup the object that defines the state of the game
       let gameObj = {
-        gameChooseShip: false,
         gameInst: false,
         gameStarted: false,
         gamePaused: false,
@@ -146,6 +145,11 @@ clean the code
       const startBG = new Image();
       startBG.src = 'gameAssets/gameBG.png';
       startBG.position = { x: 0, y: 0};
+
+      // add background image for instructions screen
+      const instBG = new Image();
+      instBG.src = 'gameAssets/instructionsBG.jpg';
+      instBG.position = { x: 0, y: 0};
 
       // add background image
       const backgroundImage = new Image();
@@ -472,6 +476,29 @@ clean the code
         context.fillText("Press Enter to Start", canvas.width/2 - 160, canvas.height/2 + 20);
       }
 
+      let drawInstructionsWindow = () => {
+        context.clearRect(0, 0, canvas.width, canvas.height);
+        context.drawImage(instBG, instBG.position.x, instBG.position.y, canvas.width, canvas.height);
+
+        context.font = "bold 90px Helvetica, Arial, sans-serif";
+        context.fillStyle = "white";
+        context.fillText("Welcome Explorer-202,", 150, 190);
+
+        context.font = "bold 40px Helvetica, Arial, sans-serif";
+
+        let x = 150;
+        let y = 300;
+
+        context.fillText("It's your turn to lead us in the search for planet Nebulus.", x, y); 
+        context.fillText("You will be travelling through a path filled with metors, asteroids, and even aliens.", x, y + 50); 
+        context.fillText("  Avoid the meteors and collect the valuable coins.", x, y + 150);context.fillText("  Your ship has a protective shield.", x, y + 200); 
+        context.fillText("  White ring - SAFE | Red ring - DANGER", x, y + 250);
+        context.fillText("  Medical kits grant you extra life.", x, y + 300);
+        context.fillText("This is your mission, should you choose to accept it.", x, y + 400);
+        context.fillText("Press c to continue...", x, y + 480);
+
+      }
+
       document.addEventListener("DOMContentLoaded", (event) => {
 
         // // function to draw the player
@@ -587,6 +614,10 @@ clean the code
               drawGameOverScreen();
             }
             // requestAnimationFrame(draw);
+          } else if (gameObj.gameInst == true) {
+            drawInstructionsWindow();
+            // gameObj.gameInst = false;
+            requestAnimationFrame(draw);
           } else {
             drawStartWindow();
             requestAnimationFrame(draw);
@@ -672,17 +703,28 @@ clean the code
             break;
           }
           // s key (down)
-          case (sKey): {8
+          case (sKey): {
             player.y += player.speed;
             break;
           }
 
-          // // enter key (start game)
+          // // // enter key (start game)
+          // case (enterKey): {
+          //   gameObj.gameStarted = true;
+          //   break;
+          // }
+          
+          // enter key (start game)
           case (enterKey): {
+            gameObj.gameInst = true;
+            break;
+          }
+          // c key (continue to start the game)
+          case (cKey): {
             gameObj.gameStarted = true;
             break;
           }
-          
+
           // default case - unwanted key is pressed
           default: {
             console.log("case fell through");
