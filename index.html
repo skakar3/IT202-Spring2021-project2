@@ -678,14 +678,22 @@
       });
 
        if ("serviceWorker" in navigator) {
-    window.addEventListener("load", function () {
-        navigator.serviceWorker
-            .register("./serviceWorker.js")
-            .then(res => console.log("service worker registered"))
-            .catch(err => console.log("service worker not registered", err));
-    });
-}
-        
+        window.addEventListener("load", () => {
+          navigator.serviceWorker.register("./sw.js", { scope: "." }).then(
+            (registration) => {
+              // registration successful
+              console.log(
+                "ServiceWorker registration successful with scope: ",
+                registration.scope
+              );
+            },
+            (err) => {
+              // registration failed
+              console.log("ServiceWorker registration failed: ", err);
+            }
+          );
+        });
+      }       
     </script>
  
   </body>
