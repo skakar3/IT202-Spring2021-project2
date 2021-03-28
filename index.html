@@ -3,7 +3,7 @@
   <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width">
-    <title>IT 202 Project 2</title>
+    <title>IT202-Spring2021-project2</title>
 
     <link rel="manifest" href="manifest.json" />
 
@@ -41,17 +41,18 @@
         scoreOffset: 0,
         level: 1
       };
-     
 
       // define the key codes of the keyboard keys
-      let downArrow = 40;
-      let upArrow = 38;
-      let wKey = 87;
-      let sKey = 83;
-      let enterKey = 13;
-      let cKey = 67;
-      let oneKey = 97;
-      let twoKey = 98;
+      let keyCodes = {
+        downArrow:40,
+        upArrow:38,
+        wKey:87,
+        sKey:83,
+        enterKey:13,
+        cKey:67,
+        oneKey:97,
+        twoKey:98
+      };
 
       // define the requestAnimationFrame
       let requestAnimationFrame = window.requestAnimationFrame ||
@@ -61,7 +62,6 @@
 
       // set the canvas and context objects
       let canvas = document.querySelector("canvas");
-      // canvas.style.backgroundColor = "silver";
       let context = canvas.getContext("2d");
 
       
@@ -73,6 +73,31 @@
         context.fillText(" |  Lives : " + player.life, 40, 70);
         context.fillText(" |  Level : " + gameObj.level, 40, 100);
       }
+
+      // add background image for start screen
+      const startBG = new Image();
+      startBG.src = 'gameAssets/gameBG.png';
+      startBG.position = { x: 0, y: 0};
+
+      // add background image for instructions screen
+      const instBG = new Image();
+      instBG.src = 'gameAssets/instructionsBG.jpg';
+      instBG.position = { x: 0, y: 0};
+ 
+      // add background image
+      const backgroundImage = new Image();
+      backgroundImage.src = 'gameAssets/bg.jpg';
+      backgroundImage.position = { x: 0, y: 0};
+
+      // add the stars slide
+      const stars = new Image();
+      stars.src = 'gameAssets/stars.png';
+      stars.position = { x: 0, y: 0};
+
+      // add the second slide of stars
+      const stars2 = new Image();
+      stars2.src = 'gameAssets/stars.png';
+      stars2.position = { x: (canvas.width + 1550), y: 0};
 
       // set the player's properties
       let playerX = (canvas.width / 2) + 100;
@@ -128,31 +153,6 @@
         context.stroke();
       }
       
-      // add background image for start screen
-      const startBG = new Image();
-      startBG.src = 'gameAssets/gameBG.png';
-      startBG.position = { x: 0, y: 0};
-
-      // add background image for instructions screen
-      const instBG = new Image();
-      instBG.src = 'gameAssets/instructionsBG.jpg';
-      instBG.position = { x: 0, y: 0};
- 
-      // add background image
-      const backgroundImage = new Image();
-      backgroundImage.src = 'gameAssets/bg.jpg';
-      backgroundImage.position = { x: 0, y: 0};
-
-      // add the stars slide
-      const stars = new Image();
-      stars.src = 'gameAssets/stars.png';
-      stars.position = { x: 0, y: 0};
-
-      // add the second slide of stars
-      const stars2 = new Image();
-      stars2.src = 'gameAssets/stars.png';
-      stars2.position = { x: (canvas.width + 1550), y: 0};
-
       // function to check if two objects objects are colliding
       let areColliding = (obj1, obj2) => {
         let dx = obj1.x - obj2.x;
@@ -177,11 +177,9 @@
 
       // add elements to the collection of ememy objects
       for (let i = 0; i < numEnemies; i++) {
-        // let x = (canvas.width) + 1635;
         let x = (canvas.width) + 1500;
         let y = enemyRadius + (Math.random() * (canvas.height - (2 * enemyRadius)));
         
-        // let direction = Math.random() * 2.0 * Math.PI;
         enemies.push({
                       x:x, 
                       y:y, 
@@ -231,6 +229,7 @@
       // function to draw the ememy / harm objects
       let drawEnemies = () => {
         enemies.forEach( (enemy) => {
+
           // draw the ring
           context.beginPath();
           context.arc(enemy.x, enemy.y, enemy.radius, 0, 2*Math.PI);
@@ -287,8 +286,11 @@
       numBenefits++;
       let medKitImg = new Image();
       medKitImg.src = 'gameAssets/medKit.svg';
+
       let x = (canvas.width) + 1500;
       let y = benefitRadius + (Math.random() * (canvas.height - (2 * benefitRadius)));
+      
+      // push medkit object to the collection of benefit objects
       benefits.push({ x:x, y:y, radius:benefitRadius, speed:6, colour:benefitColor, img:medKitImg, type:"medKit" });
 
       // function to check if benefit objects are colliding
@@ -309,28 +311,6 @@
             }
           });
         });
-      }
-
-      // check for collision between the player and the benefit objects
-      let playerBenefitCollision = () => {
-        
-        // iterate over each benefit element
-        benefits.forEach( (benefit) => {
-          
-          // check for collision
-          if (areColliding(player, benefit)) {
-            
-            // increment player score if benefit object is a coin
-            if (benefit.type == "coin") {
-              player.score += 1;
-            } else if (benefit.type == "medKit") {
-              player.life++;
-            }
-
-            benefit.x = (canvas.width);
-            benefit.y = benefit.radius + (Math.random() * (canvas.height - (2 * benefit.radius)));
-          }
-        });   
       }
 
       // function to draw the benefit objects
@@ -361,6 +341,28 @@
         checkBenefitCollision();
       }
       
+      // check for collision between the player and the benefit objects
+      let playerBenefitCollision = () => {
+        
+        // iterate over each benefit element
+        benefits.forEach( (benefit) => {
+          
+          // check for collision
+          if (areColliding(player, benefit)) {
+            
+            // increment player score if benefit object is a coin
+            if (benefit.type == "coin") {
+              player.score += 1;
+            } else if (benefit.type == "medKit") {
+              player.life++;
+            }
+
+            benefit.x = (canvas.width);
+            benefit.y = benefit.radius + (Math.random() * (canvas.height - (2 * benefit.radius)));
+          }
+        });   
+      }
+
       // function to check if the player is going off bounds
       let playerEdgeCheck = (player) => {
         if ((player.y - player.radius) < 0) {
@@ -390,6 +392,7 @@
         });
       }
       
+      // function to draw the game background
       let drawBackground = () => {
         // draw the background
         context.drawImage(backgroundImage, backgroundImage.position.x, backgroundImage.position.y, canvas.width, canvas.height);
@@ -435,6 +438,7 @@
         });
       }
 
+      // function to draw the game over screen
       let drawGameOverScreen = () => {
         // clear previous scene
         context.clearRect(0, 0, canvas.width, canvas.height);
@@ -473,6 +477,7 @@
         canvas.setAttribute('height', style.height() * dpi);
       }
 
+      // function to draw the start screen of the game
       let drawStartWindow = () => {
         context.drawImage(startBG, startBG.position.x, startBG.position.y, canvas.width, canvas.height);
         context.font = "bold 35px Helvetica, Arial, sans-serif";
@@ -480,44 +485,49 @@
         context.fillText("Press Enter to Start", canvas.width/2 - 160, canvas.height/2 + 20);
       }
 
+      // function to draw the screen that displays the instructions to the player
       let drawInstructionsWindow = () => {
         context.clearRect(0, 0, canvas.width, canvas.height);
         context.drawImage(instBG, instBG.position.x, instBG.position.y, canvas.width, canvas.height);
 
+        // add heading
         context.font = "bold 90px Helvetica, Arial, sans-serif";
         context.fillStyle = "white";
         context.fillText("Welcome Explorer-202,", 150, 190);
 
         context.font = "bold 40px Helvetica, Arial, sans-serif";
-
         let x = 150;
         let y = 300;
 
+        // add the instructions
         context.fillText("It's your turn to lead us in the search for planet Nebulus.", x, y); 
-        context.fillText("You will be travelling through a path filled with metors, asteroids, and even aliens.", x, y + 50); 
-        context.fillText("  Avoid the meteors and collect the valuable coins.", x, y + 150);
+        context.fillText("You will be travelling through a path filled with obstacles metors and asteroids.", x, y + 50); 
+        context.fillText("  Avoid the obstacles and collect the valuable coins.", x, y + 150);
         context.fillText("  Your ship has a protective shield. (White ring - SAFE | Red ring - DANGER)", x, y + 200); 
         context.fillText("  Medical kits grant you extra life.", x, y + 250);
         context.fillText("  Press UP arrow or W to go up and press DOWN arrow or S to go down.", x, y + 300);
         context.fillText("This is your mission, should you choose to accept it.", x, y + 400);
         context.fillText("Press c to continue...", x, y + 480);
-
       }
 
+      // function to draw the screen that allows the user to choose the space ships
       let drawChooseShipWindow = () => {
         context.clearRect(0, 0, canvas.width, canvas.height);
 
         context.drawImage(instBG, instBG.position.x, instBG.position.y, canvas.width, canvas.height);
-
+        
+        // add heading
         context.font = "bold 70px Helvetica, Arial, sans-serif";
         context.fillStyle = "white";
         context.fillText("Choose your ship", 140, 160);
 
+        // add images of ships that the user can choose from
         let shipImg = new Image();
         shipImg.src = 'gameAssets/ship1.png';
         shipImg.position = { x: 300, y: canvas.height/2 - 260};
         context.drawImage(shipImg, shipImg.position.x, shipImg.position.y, 500, 500);
         context.font = "bold 30px Helvetica, Arial, sans-serif";
+        context.fillText("Press 1 to choose Ship-1 and 2 to choose Ship-2", 140, 200);
         context.fillText("Press 1", 500, 750);
 
         let shipImg2 = new Image();
@@ -539,10 +549,10 @@
 
           // check if game has started
           if (gameObj.gameStarted == true) {
-            // draw the background
+            // draw background
             drawBackground();
 
-            // draw the game data
+            // draw game data
             drawGameData();
 
             // check if the player can go to the next level
@@ -553,10 +563,10 @@
             // draw the player
             drawPlayer();
 
-            // draw the enemies
+            // draw enemies
             drawEnemies();
 
-            // draw the beneits
+            // draw beneits
             drawBenefits();
 
             // check for collision between player and enemy / harm objects
@@ -569,7 +579,7 @@
               player.strokeColor = "white";
             }
 
-            // game over check
+            // check if game is over
             if (player.life <= 0) {
               gameObj.gameOver = true;
             }
@@ -589,20 +599,22 @@
             // invoke request animation frame only when the game is not over
             if (gameObj.gameOver == false) {
               requestAnimationFrame(draw);
-            } else {
+            } else {              
               // draw the game over screen
               drawGameOverScreen();
             }
-            // requestAnimationFrame(draw);
           } else if (gameObj.gameChooseShip == true) {
+            // draw choose ship screen
             drawChooseShipWindow();
             requestAnimationFrame(draw);
 
           } else if (gameObj.gameInst == true) {
+            // draw instructions screen            
             drawInstructionsWindow();
-            // gameObj.gameInst = false;
             requestAnimationFrame(draw);
+
           } else {
+            // draw game start screen
             drawStartWindow();
             requestAnimationFrame(draw);
           }
@@ -611,43 +623,42 @@
        
       });
 
-      // add an event listner for keydown of the up arrow key
+      // add an event listner for keydown events
       document.addEventListener("keydown", (event) => {
         
         switch(event.keyCode) {
           // up arrow
-          case (upArrow): {
+          case (keyCodes.upArrow): {
             player.y -= player.speed;
             break;
           }
           // down arrow
-          case (downArrow): {
+          case (keyCodes.downArrow): {
             player.y += player.speed;
             break;
           }
            // w key (up)
-          case (wKey): {
+          case (keyCodes.wKey): {
             player.y -= player.speed;
             break;
           }
           // s key (down)
-          case (sKey): {
+          case (keyCodes.sKey): {
             player.y += player.speed;
             break;
           }
           // enter key (start game)
-          case (enterKey): {
+          case (keyCodes.enterKey): {
             gameObj.gameInst = true;
             break;
           }
           // c key (continue to start the game)
-          case (cKey): {
+          case (keyCodes.cKey): {
             gameObj.gameChooseShip = true;
-            // gameObj.gameStarted = true;
             break;
           }
           // when user presses 1 key (on keypad or normally)
-          case (oneKey): {
+          case (keyCodes.oneKey): {
             player.img.src = 'gameAssets/ship1.png';
             gameObj.gameStarted = true;
             break;
@@ -658,7 +669,7 @@
             break;
           }
           // when user presses 2 key (on keypad or normally)
-          case (twoKey): {
+          case (keyCodes.twoKey): {
             player.img.src = 'gameAssets/ship2.png';
             gameObj.gameStarted = true;
             break;
@@ -668,7 +679,6 @@
             gameObj.gameStarted = true;
             break;
           }
-
           // default case - unwanted key is pressed
           default: {
             console.log("case fell through");
@@ -677,7 +687,9 @@
 
       });
 
-       if ("serviceWorker" in navigator) {
+
+      // Register the Service Worker
+      if ("serviceWorker" in navigator) {
         window.addEventListener("load", () => {
           navigator.serviceWorker.register("./sw.js", { scope: "." }).then(
             (registration) => {

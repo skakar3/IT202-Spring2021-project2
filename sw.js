@@ -1,4 +1,4 @@
-const cacheName = "project2"
+const cacheName = "Project2"
 const assets = [
   "./",
   "./index.html",
@@ -13,6 +13,7 @@ const assets = [
   "./gameAssets/stars.png"
 ]
 
+// event handler for the install event
 self.addEventListener("install", installEvent => {
     installEvent.waitUntil(
         caches.open(cacheName).then(cache => {
@@ -21,6 +22,7 @@ self.addEventListener("install", installEvent => {
     )
 })
 
+// event handler for the fetch event
 self.addEventListener("fetch", fetchEvent => {
     fetchEvent.respondWith(
         caches.match(fetchEvent.request).then(res => {
