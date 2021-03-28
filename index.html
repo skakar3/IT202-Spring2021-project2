@@ -39,7 +39,9 @@
         gameOver: false,
         levelOffset: 30,
         scoreOffset: 0,
-        level: 1
+        level: 1,
+        numEnemies: 2,
+        numBenefits: 5
       };
 
       // define the key codes of the keyboard keys
@@ -99,36 +101,21 @@
       stars2.src = 'gameAssets/stars.png';
       stars2.position = { x: (canvas.width + 1550), y: 0};
 
-      // set the player's properties
-      let playerX = (canvas.width / 2) + 100;
-      let playerY = (canvas.height / 2);
-      let playerRadius = 110;
-      let playerRing = 8;
-      let playerSpeed = 25;
-      let playerColor = "white";
-      let playerfill = "transparent";
-
-      // set player's life property
-      let playerLife = 5;
-
-      // set the player's score
-      let playerScore = 0;
-
       // define the player's image
       let playerImg = new Image();
       playerImg.src = "gameAssets/ship2.png";
 
       // assign the initial properties of the player
       let player = {
-        x: playerX, 
-        y: playerY,
-        radius: playerRadius,
-        ring: playerRing,
-        strokeColor: playerColor,
-        fillColor: playerfill,
-        speed: playerSpeed,
-        life: playerLife,
-        score: playerScore,
+        x: (canvas.width / 2) + 100, 
+        y: (canvas.height / 2),
+        radius: 110,
+        ring: 8,
+        strokeColor: "white",
+        fillColor: "transparent",
+        speed: 25,
+        life: 5,
+        score: 0,
         img: playerImg
       };
 
@@ -165,7 +152,6 @@
       }
 
       // define the enemy / harm objects
-      let numEnemies = 2;
       let enemyRadius = 40;
       let enemyColor = "red";
       let enemySpeed = 10;
@@ -176,7 +162,7 @@
       let enemies = [];
 
       // add elements to the collection of ememy objects
-      for (let i = 0; i < numEnemies; i++) {
+      for (let i = 0; i < gameObj.numEnemies; i++) {
         let x = (canvas.width) + 1500;
         let y = enemyRadius + (Math.random() * (canvas.height - (2 * enemyRadius)));
         
@@ -256,7 +242,6 @@
       }
 
       // define the benefit objects
-      let numBenefits = 5;
       let benefitRadius = 30;
       let benefitColor = "gold";
       let benefitSpeed = 10;
@@ -266,7 +251,7 @@
       let benefits = [];
 
       // add elements to the collection of benefit objects
-      for (let i = 0; i < numBenefits; i++) {
+      for (let i = 0; i < gameObj.numBenefits; i++) {
         // let x = (canvas.width) + 1635;
         let x = (canvas.width) + 1500;
         let y = benefitRadius + (Math.random() * (canvas.height - (2 * benefitRadius)));
@@ -283,7 +268,7 @@
       }
 
       // add a medical kit object that will increment the players life by 1
-      numBenefits++;
+      gameObj.numBenefits++;
       let medKitImg = new Image();
       medKitImg.src = 'gameAssets/medKit.svg';
 
@@ -430,7 +415,7 @@
         let y = enemyRadius + (Math.random() * (canvas.height - (2 * enemyRadius)));
        
         enemies.push({x:x, y:y, radius:enemyRadius, speed:enemySpeed, colour:enemyColor, img:enemyImg });
-        numEnemies++;
+        gameObj.numEnemies++;
 
         // increment speed with which the enemy / harm objects move accross the screen
         enemies.forEach( (enemy) => {
@@ -519,7 +504,7 @@
         // add heading
         context.font = "bold 70px Helvetica, Arial, sans-serif";
         context.fillStyle = "white";
-        context.fillText("Choose your ship", 140, 160);
+        context.fillText("Choose your ship", 140, 150);
 
         // add images of ships that the user can choose from
         let shipImg = new Image();
